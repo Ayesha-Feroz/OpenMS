@@ -17,6 +17,7 @@ Epifany
 ERPairFinder
 FeatureFinderMetaboIdent
 FeatureFinderSuperHirn
+FeatureFinderTDP
 FFEval
 FuzzyDiff
 IDDecoyProbability
