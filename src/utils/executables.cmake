@@ -15,6 +15,7 @@ Digestor
 DigestorMotif
 Epifany
 ERPairFinder
+FeatureFinderIntact
 FeatureFinderMetaboIdent
 FeatureFinderSuperHirn
 FFEval
