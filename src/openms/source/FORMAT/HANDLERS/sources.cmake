@@ -6,6 +6,7 @@ set(sources_list
   AcqusHandler.cpp
   CachedMzMLHandler.cpp
   FidHandler.cpp
+  GraphMLHandler
   IndexedMzMLDecoder.cpp
   IndexedMzMLHandler.cpp
   MascotXMLHandler.cpp
