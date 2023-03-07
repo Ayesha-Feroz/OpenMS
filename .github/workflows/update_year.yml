@@ -1,34 +1,38 @@
 on:
   workflow_dispatch:
-  env:
+  
+env:
   year: 2023
-  jobs:
-  updating_year_numbers:
-  runs-on: macos-latest
-steps:
-  - uses: actions/checkout@v3
-  - name: update files
-    run: |
-      # update year numbers in headers
-      find . -type f \( -name '*.h' -o -name '*.cpp' \) -exec sed -i '' "s/\\b20[0-9][0-9]\\b/$year/g" {} \;
 
-      # update year numbers in license files
-      sed -i '' "s/\\b20[0-9][0-9]\\b-$((year - 1))/20$((year - 1))-$year/g" License.txt
-      sed -i '' "s/\\b20[0-9][0-9]\\b-$((year - 1))/20$((year - 1))-$year/g" LICENSE
-        - name: check for changed files
-    id: changed-files
-    run: |
-      if git diff --exit-code; then
-        echo "changes_exist=false" >> $GITHUB_ENV
-      else
-        echo "changes_exist=true" >> $GITHUB_ENV
-      fi
-  - name: Commit and PR updated files
-    if: env.changes_exist == 'true'
-    uses: peter-evans/create-pull-request@v4
-    with:
-      commit-message: Updated year numbers in headers and license files
-      committer: OpenMS <OpenMS@github.com>
-      branch: update_year_numbers
-      delete-branch: true
-      title: '[ByGitAction] Updated year numbers in headers and license files'
+jobs:
+  updating_year_numbers:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: update files
+        run: |
+          # update year numbers in headers
+          find . -type f \( -name '*.h' -o -name '*.cpp' \) -exec sed -i '' "s/\\b20[0-9][0-9]\\b/$year/g" {} \;
+
+          # update year numbers in license files
+          sed -i '' "s/\\b20[0-9][0-9]\\b-$((year - 1))/20$((year - 1))-$year/g" License.txt
+          sed -i '' "s/\\b20[0-9][0-9]\\b-$((year - 1))/20$((year - 1))-$year/g" LICENSE
+          
+      - name: check for changed files
+        id: changed-files
+        run: |
+          if git diff --exit-code; then
+            echo "changes_exist=false" >> $GITHUB_ENV
+          else
+            echo "changes_exist=true" >> $GITHUB_ENV
+          fi
+          
+      - name: Commit and PR updated files
+        if: env.changes_exist == 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Updated year numbers in headers and license files
+          committer: OpenMS <OpenMS@github.com>
+          branch: update_year_numbers
+          delete-branch: true
+          title: '[ByGitAction] Updated year numbers in headers and license files'
