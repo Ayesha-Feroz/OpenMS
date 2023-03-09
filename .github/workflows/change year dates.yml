@@ -1,0 +1,42 @@
+ Trigger this action manually
+on:
+  workflow_dispatch:
+
+# Update these variables before triggering this action
+env:
+  year: 2023
+
+jobs:
+  updating_year_numbers:
+    runs-on: macos-latest
+    steps:
+    # Getting files (OpenMS)
+      - uses: actions/checkout@v2
+    # Update files with new year numbers
+      - name: update files
+        run: |
+          # update year in COPYRIGHT and License files
+          find . -type f \( -name "COPYRIGHT" -o -name "License.txt" -o -name "LICENSE" \) -exec sed -i "s/2014-$YEAR/2014-$year/g" {} +
+          # update year in all header and cpp files
+          find . -type f \( -name "*.h" -o -name "*.cpp" \) -exec sed -i "s/\b2014-$YEAR\b/2014-$year/g" {} +
+          # run update_header_dates.sh script to update year in header comments
+          bash ./tools/update_header_dates.sh
+    # Check for changes
+      - name: check for changed files
+        id: changed-files
+        run: |
+          if git diff --exit-code; then
+            echo "changes_exist=false" >> $GITHUB_ENV
+          else
+            echo "changes_exist=true" >> $GITHUB_ENV
+          fi
+    # Commit and PR updated files
+      - name: Commit and PR updated files
+        if: env.changes_exist == 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: Updated year numbers
+          committer: OpenMS <OpenMS@github.com>
+          branch: update_year_numbers
+          delete-branch: true
+          title: '[ByGitAction] Updated year numbers'
