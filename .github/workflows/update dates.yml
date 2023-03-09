@@ -8,7 +8,7 @@ env:
 
 jobs:
   updating_year_numbers:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
     # Getting files (OpenMS)
       - uses: actions/checkout@v2
