@@ -1,0 +1,73 @@
+#include <OpenMS/APPLICATIONS/TOPPBase.h>
+#include <OpenMS/CONCEPT/LogStream.h>
+#include <OpenMS/FORMAT/FileHandler.h>
+#include <OpenMS/FORMAT/FASTAFile.h>
+
+using namespace OpenMS;
+using namespace std;
+
+class TOPPTopDownTagSearch :
+        public TOPPBase
+{
+public:
+    TOPPTopDownTagSearch() :
+            TOPPBase("TopDownTagSearch", "Searches for protein entries in a FASTA database based on sequence tags", false)
+    {
+    }
+
+protected:
+    void registerOptionsAndFlags_() override
+    {
+        registerInputFile_("tags", "<file>", "", "Input file containing sequence tags.");
+        setValidFormats_("tags", ListUtils::create<String>("txt"));
+        registerInputFile_("fasta", "<file>", "", "Input FASTA file containing protein sequences.");
+        setValidFormats_("fasta", ListUtils::create<String>("fasta"));
+        registerOutputFile_("out", "<file>", "", "Output FASTA file containing matching protein entries.");
+        setValidFormats_("out", ListUtils::create<String>("fasta"));
+    }
+
+    ExitCodes main_(int, const char **) override
+    {
+        String tags_file(getStringOption_("tags"));
+        String fasta_file(getStringOption_("fasta"));
+        String out_file(getStringOption_("out"));
+
+        vector<String> sequence_tags;
+        ifstream tags_stream(tags_file);
+        string line;
+        while (getline(tags_stream, line))
+        {
+            line = line.trim();
+            if (!line.empty())
+            {
+                sequence_tags.push_back(line);
+            }
+        }
+
+        vector<FASTAFile::FASTAEntry> db;
+        FASTAFile().load(fasta_file, db);
+
+        vector<FASTAFile::FASTAEntry> matching_entries;
+        for (const String& tag : sequence_tags)
+        {
+            for (const FASTAFile::FASTAEntry& entry : db)
+            {
+                if (entry.sequence.hasSubstring(tag))
+                {
+                    matching_entries.push_back(entry);
+                }
+            }
+        }
+
+        FASTAFile().store(out_file, matching_entries);
+
+        return EXECUTION_OK;
+    }
+
+};
+
+int main(int argc, const char ** argv)
+{
+    TOPPTopDownTagSearch tool;
+    return tool.main(argc, argv);
+}
