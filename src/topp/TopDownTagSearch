@@ -2,6 +2,7 @@
 #include <OpenMS/CONCEPT/LogStream.h>
 #include <OpenMS/FORMAT/FileHandler.h>
 #include <OpenMS/FORMAT/FASTAFile.h>
+#include <OpenMS/DATASTRUCTURES/String.h> 
 
 using namespace OpenMS;
 using namespace std;
@@ -37,7 +38,7 @@ protected:
         string line;
         while (getline(tags_stream, line))
         {
-            line = line.trim();
+            line = String(line).trim(); // Use OpenMS String's trim method
             if (!line.empty())
             {
                 sequence_tags.push_back(line);
