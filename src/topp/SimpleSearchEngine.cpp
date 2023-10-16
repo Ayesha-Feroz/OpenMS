@@ -63,6 +63,7 @@ class SimpleSearchEngine :
     public TOPPBase
 {
   public:
+// Constructor: Initilizes the tool with its name and description.
     SimpleSearchEngine() :
       TOPPBase("SimpleSearchEngine",
         "Annotates MS/MS spectra using SimpleSearchEngine.",
@@ -71,14 +72,18 @@ class SimpleSearchEngine :
     }
 
   protected:
+// register input, output, and parameters for the tool.
     void registerOptionsAndFlags_() override
     {
+      // Input: MS/MS spectra in mzML format.
       registerInputFile_("in", "<file>", "", "input file ");
       setValidFormats_("in", ListUtils::create<String>("mzML"));
 
+      // Input: Protein sequence database in FASTA format.
       registerInputFile_("database", "<file>", "", "input file ");
       setValidFormats_("database", ListUtils::create<String>("fasta"));
 
+      // Output: Peptide identifications in idXML format.
       registerOutputFile_("out", "<file>", "", "output file ");
       setValidFormats_("out", ListUtils::create<String>("idXML"));
 
@@ -88,6 +93,7 @@ class SimpleSearchEngine :
       registerFullParam_(search_algo_params_with_subsection);
     }
 
+    // Main logic for processing input and generating output.
     ExitCodes main_(int, const char**) override
     {
       String in = getStringOption_("in");
@@ -124,6 +130,7 @@ class SimpleSearchEngine :
 
 };
 
+// Main function: entry point of the tool.
 int main(int argc, const char** argv)
 {
   SimpleSearchEngine tool;
